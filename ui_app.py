@@ -11,7 +11,7 @@ st.set_page_config(
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-* { font-family: 'Inter', sans-serif !important; }
+*:not([data-testid="stIconMaterial"]) { font-family: 'Inter', sans-serif !important; }
 
 /* ── Background ── */
 .stApp { background: #f9fafb; }
@@ -192,6 +192,11 @@ hr { border-color: #e5e7eb !important; }
 """, unsafe_allow_html=True)
 
 
+# ── Avatars used throughout the app (emoji avoids Material Symbols font issues) ──
+USER_AVATAR = "🧑"
+ASSISTANT_AVATAR = "🤖"
+
+
 # ── Session state ──
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -289,7 +294,8 @@ if not st.session_state.messages:
 
 # ── Chat history ──
 for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
+    avatar = USER_AVATAR if msg["role"] == "user" else ASSISTANT_AVATAR
+    with st.chat_message(msg["role"], avatar=avatar):
         st.markdown(msg["content"])
 
 # ── Chat input ──
@@ -297,10 +303,10 @@ question = st.chat_input("Ask a question about the college...")
 
 if question:
     st.session_state.messages.append({"role": "user", "content": question})
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar=USER_AVATAR):
         st.markdown(question)
 
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
         with st.spinner("Searching college knowledge base..."):
             answer = ask_question(question)
         st.markdown(answer)
