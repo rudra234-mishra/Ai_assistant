@@ -1,5 +1,5 @@
 import streamlit as st
-from chat import ask_question
+from chat import ask_question_stream   # ← streaming version
 
 st.set_page_config(
     page_title="Udayanath College AI Assistant",
@@ -11,12 +11,11 @@ st.set_page_config(
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-*:not([data-testid="stIconMaterial"]) { font-family: 'Inter', sans-serif !important; }
+* { font-family: 'Inter', sans-serif !important; }
 
 /* ── Background ── */
 .stApp { background: #f9fafb; }
 
-/* ── Remove top padding so title has room ── */
 .block-container {
     background: transparent !important;
     padding-top: 2.5rem !important;
@@ -31,7 +30,6 @@ section[data-testid="stSidebar"] {
 }
 section[data-testid="stSidebar"] * { color: #c7d2fe !important; }
 
-/* ── Sidebar clear button ── */
 section[data-testid="stSidebar"] .stButton > button {
     background: #312e81 !important;
     color: #fca5a5 !important;
@@ -46,7 +44,7 @@ section[data-testid="stSidebar"] .stButton > button:hover {
     color: #fff !important;
 }
 
-/* ── Title — big, clear, full width ── */
+/* ── Title ── */
 .title {
     text-align: center;
     font-size: 2rem;
@@ -54,7 +52,7 @@ section[data-testid="stSidebar"] .stButton > button:hover {
     color: #1e1b4b;
     letter-spacing: -0.4px;
     line-height: 1.3;
-    padding: 0.5rem 0 0.2rem;
+    padding: 0.3rem 0 0.2rem;
     -webkit-text-fill-color: #1e1b4b !important;
 }
 
@@ -135,7 +133,7 @@ div[data-testid="chatAvatarIcon-assistant"] {
     border-radius: 50% !important;
 }
 
-/* ── Chat input — FIX: light background, dark visible text ── */
+/* ── Chat input ── */
 div[data-testid="stChatInput"] {
     background: #ffffff !important;
     border: 1.5px solid #c7d2fe !important;
@@ -147,7 +145,6 @@ div[data-testid="stChatInput"]:focus-within {
     border-color: #6366f1 !important;
     box-shadow: 0 0 0 3px rgba(99,102,241,0.15) !important;
 }
-/* FIX: make textarea text dark and visible */
 div[data-testid="stChatInput"] textarea {
     background: #ffffff !important;
     color: #111827 !important;
@@ -156,7 +153,6 @@ div[data-testid="stChatInput"] textarea {
     box-shadow: none !important;
     caret-color: #4f46e5 !important;
 }
-/* FIX: make placeholder clearly visible */
 div[data-testid="stChatInput"] textarea::placeholder {
     color: #9ca3af !important;
     opacity: 1 !important;
@@ -184,17 +180,16 @@ div[data-testid="stChatInput"] button:hover {
     font-weight: 500;
 }
 
-/* ── General text ── */
-p, label, span { color: #374151 !important; }
+/* ── Streaming cursor blink ── */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
 
+p, label, span { color: #374151 !important; }
 hr { border-color: #e5e7eb !important; }
 </style>
 """, unsafe_allow_html=True)
-
-
-# ── Avatars used throughout the app (emoji avoids Material Symbols font issues) ──
-USER_AVATAR = "🧑"
-ASSISTANT_AVATAR = "🤖"
 
 
 # ── Session state ──
@@ -254,7 +249,7 @@ with st.sidebar:
         st.rerun()
 
 
-# ── Header — split into two lines so it never clips ──
+# ── Header ──
 st.markdown("""
 <div style='text-align:center;padding-top:0.5rem;'>
     <div style='font-size:2.2rem;margin-bottom:4px;'>🎓</div>
@@ -294,21 +289,23 @@ if not st.session_state.messages:
 
 # ── Chat history ──
 for msg in st.session_state.messages:
-    avatar = USER_AVATAR if msg["role"] == "user" else ASSISTANT_AVATAR
-    with st.chat_message(msg["role"], avatar=avatar):
+    with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
 # ── Chat input ──
 question = st.chat_input("Ask a question about the college...")
 
 if question:
+
+    # Show user message
     st.session_state.messages.append({"role": "user", "content": question})
-    with st.chat_message("user", avatar=USER_AVATAR):
+    with st.chat_message("user"):
         st.markdown(question)
 
-    with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
-        with st.spinner("Searching college knowledge base..."):
-            answer = ask_question(question)
-        st.markdown(answer)
+    # Stream assistant response
+    with st.chat_message("assistant"):
+        # st.write_stream consumes the generator and streams text word by word
+        streamed_answer = st.write_stream(ask_question_stream(question))
 
-    st.session_state.messages.append({"role": "assistant", "content": answer})
+    # Save the fully streamed answer to history
+    st.session_state.messages.append({"role": "assistant", "content": streamed_answer})
