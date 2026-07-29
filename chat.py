@@ -101,31 +101,67 @@ Answer:
 
 
 
-def ask_question(user_query):
+# def ask_question(user_query):
 
+#     query_embd = emb_model.embed_query(user_query)
+
+#     conn = database_connection()
+#     cur = conn.cursor()
+
+#     sql = """
+#     SELECT "content"
+#     FROM "Rudra"."clg_document"
+#     ORDER BY "embedding" <=> %s::vector
+#     LIMIT 7
+#     """
+
+#     cur.execute(sql, (query_embd,))
+#     rows = cur.fetchall()
+
+#     context = "\n\n".join(row[0] for row in rows)
+
+#     prompt_value = prompt.invoke({
+#         "query": user_query,
+#         "context": context
+#     })
+
+#     model = llm_model_conn()
+#     response = model.invoke(prompt_value).content
+
+#     return response
+
+
+def ask_question_stream(user_query):
+    """
+    Streaming version — yields text chunks one by one.
+    Use with st.write_stream() in the UI.
+    """
+ 
     query_embd = emb_model.embed_query(user_query)
-
+ 
     conn = database_connection()
     cur = conn.cursor()
-
+ 
     sql = """
     SELECT "content"
     FROM "Rudra"."clg_document"
     ORDER BY "embedding" <=> %s::vector
     LIMIT 7
     """
-
+ 
     cur.execute(sql, (query_embd,))
     rows = cur.fetchall()
-
+ 
     context = "\n\n".join(row[0] for row in rows)
-
+ 
     prompt_value = prompt.invoke({
         "query": user_query,
         "context": context
     })
-
+ 
     model = llm_model_conn()
-    response = model.invoke(prompt_value).content
-
-    return response
+ 
+    # stream() yields AIMessageChunk objects — we yield only the text content
+    for chunk in model.stream(prompt_value):
+        if chunk.content:
+            yield chunk.content
