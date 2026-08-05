@@ -1,5 +1,5 @@
 import streamlit as st
-from chat import ask_question_stream   # ← streaming version
+from chat import ask_question_stream
 
 st.set_page_config(
     page_title="Udayanath College AI Assistant",
@@ -14,25 +14,25 @@ st.markdown("""
 * { font-family: 'Inter', sans-serif !important; }
 
 /* ── Background ── */
-.stApp { background: #f9fafb; }
+.stApp { background: #0f0f0f; }
 
 .block-container {
     background: transparent !important;
-    padding-top: 2.5rem !important;
+    padding-top: 2rem !important;
     padding-left: 2.5rem !important;
     padding-right: 2.5rem !important;
 }
 
 /* ── Sidebar ── */
 section[data-testid="stSidebar"] {
-    background: #1e1b4b !important;
-    border-right: none !important;
+    background: #111111 !important;
+    border-right: 1px solid #1f1f1f !important;
 }
-section[data-testid="stSidebar"] * { color: #c7d2fe !important; }
+section[data-testid="stSidebar"] * { color: #a1a1aa !important; }
 
 section[data-testid="stSidebar"] .stButton > button {
-    background: #312e81 !important;
-    color: #fca5a5 !important;
+    background: #1a0505 !important;
+    color: #f87171 !important;
     border: 1.5px solid #ef4444 !important;
     border-radius: 10px !important;
     font-weight: 600 !important;
@@ -49,145 +49,122 @@ section[data-testid="stSidebar"] .stButton > button:hover {
     text-align: center;
     font-size: 2rem;
     font-weight: 800;
-    color: #1e1b4b;
-    letter-spacing: -0.4px;
+    background: linear-gradient(90deg, #f97316, #fb923c, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     line-height: 1.3;
     padding: 0.3rem 0 0.2rem;
-    -webkit-text-fill-color: #1e1b4b !important;
 }
 
 /* ── Subtitle ── */
 .subtitle {
     text-align: center;
-    color: #6b7280;
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
+    color: #52525b !important;
+    font-size: 0.88rem;
+    margin-bottom: 0.3rem;
     line-height: 1.6;
 }
-.subtitle b { color: #4338ca !important; }
+.subtitle b { color: #f97316 !important; }
 
 /* ── Developer badge ── */
-.dev-wrapper { text-align: center; margin: 0.5rem 0 0.8rem; }
+.dev-wrapper { text-align: center; margin: 0.4rem 0 0.6rem; }
 .dev-badge {
     display: inline-block;
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    background: linear-gradient(135deg, #f97316, #ef4444);
     color: #fff !important;
     font-size: 0.82rem;
     font-weight: 700;
     padding: 7px 22px;
     border-radius: 999px;
     letter-spacing: 0.3px;
-    box-shadow: 0 0 0 4px rgba(79,70,229,0.15), 0 4px 18px rgba(79,70,229,0.4);
     animation: badge-pulse 2.5s ease-in-out infinite;
 }
 @keyframes badge-pulse {
-    0%,100% { box-shadow: 0 0 0 4px rgba(79,70,229,0.15), 0 4px 18px rgba(79,70,229,0.3); }
-    50%      { box-shadow: 0 0 0 8px rgba(79,70,229,0.2), 0 6px 30px rgba(79,70,229,0.55); }
+    0%,100% { box-shadow: 0 0 0 3px rgba(249,115,22,0.2), 0 4px 16px rgba(249,115,22,0.3); }
+    50%      { box-shadow: 0 0 0 6px rgba(249,115,22,0.15), 0 6px 28px rgba(249,115,22,0.5); }
 }
 
 /* ── User bubble ── */
-div[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
-    background: #ede9fe !important;
-    border: 1px solid #c4b5fd !important;
+div[data-testid="stChatMessage"]:has(img[alt="🧑"]),
+div[data-testid="stChatMessage"]:nth-of-type(odd) {
+    background: #1c1007 !important;
+    border: 1px solid #f97316 !important;
     border-radius: 18px 18px 4px 18px !important;
     padding: 14px 18px !important;
     margin: 6px 0 !important;
-    box-shadow: 0 1px 6px rgba(109,40,217,0.08);
+    box-shadow: 0 0 12px rgba(249,115,22,0.1);
 }
 
 /* ── Assistant bubble ── */
-div[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
-    background: #ffffff !important;
-    border: 1px solid #e0e7ff !important;
+div[data-testid="stChatMessage"]:has(img[alt="🤖"]) {
+    background: #111111 !important;
+    border: 1px solid #292929 !important;
     border-radius: 18px 18px 18px 4px !important;
     padding: 14px 18px !important;
     margin: 6px 0 !important;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.3);
 }
 
-/* ── User text ── */
-div[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) p,
-div[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) span,
-div[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) div {
-    color: #3730a3 !important;
+/* ── All chat text ── */
+div[data-testid="stChatMessage"] p,
+div[data-testid="stChatMessage"] span,
+div[data-testid="stChatMessage"] li,
+div[data-testid="stChatMessage"] div {
+    color: #e4e4e7 !important;
     font-size: 0.95rem !important;
-    line-height: 1.7 !important;
-}
-
-/* ── Assistant text ── */
-div[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) p,
-div[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) span,
-div[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) div {
-    color: #111827 !important;
-    font-size: 0.95rem !important;
-    line-height: 1.7 !important;
-}
-
-/* ── Avatars ── */
-div[data-testid="chatAvatarIcon-user"] {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
-    border-radius: 50% !important;
-}
-div[data-testid="chatAvatarIcon-assistant"] {
-    background: linear-gradient(135deg, #0ea5e9, #6366f1) !important;
-    border-radius: 50% !important;
+    line-height: 1.75 !important;
 }
 
 /* ── Chat input ── */
 div[data-testid="stChatInput"] {
-    background: #ffffff !important;
-    border: 1.5px solid #c7d2fe !important;
+    background: #1a1a1a !important;
+    border: 1.5px solid #292929 !important;
     border-radius: 14px !important;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.06) !important;
     transition: all 0.2s ease !important;
 }
 div[data-testid="stChatInput"]:focus-within {
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.15) !important;
+    border-color: #f97316 !important;
+    box-shadow: 0 0 0 3px rgba(249,115,22,0.12) !important;
 }
 div[data-testid="stChatInput"] textarea {
-    background: #ffffff !important;
-    color: #111827 !important;
+    background: transparent !important;
+    color: #f4f4f5 !important;
     font-size: 0.95rem !important;
     border: none !important;
     box-shadow: none !important;
-    caret-color: #4f46e5 !important;
+    caret-color: #f97316 !important;
 }
 div[data-testid="stChatInput"] textarea::placeholder {
-    color: #9ca3af !important;
+    color: #3f3f46 !important;
     opacity: 1 !important;
 }
 div[data-testid="stChatInput"] button {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    background: linear-gradient(135deg, #f97316, #ef4444) !important;
     border: none !important;
     border-radius: 8px !important;
     transition: all 0.2s ease !important;
 }
 div[data-testid="stChatInput"] button:hover {
-    opacity: 0.88 !important;
+    opacity: 0.85 !important;
     transform: scale(1.07) !important;
 }
 
 /* ── Topic pills ── */
 .pill {
     display: inline-block;
-    background: #312e81;
-    color: #c7d2fe !important;
+    background: #1c1007;
+    border: 1px solid #f9731633;
+    color: #fb923c !important;
     border-radius: 8px;
     padding: 4px 10px;
     margin: 3px 2px;
-    font-size: 0.76rem;
+    font-size: 0.75rem;
     font-weight: 500;
 }
 
-/* ── Streaming cursor blink ── */
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0; }
-}
-
-p, label, span { color: #374151 !important; }
-hr { border-color: #e5e7eb !important; }
+/* ── General text ── */
+p, label, span { color: #71717a !important; }
+hr { border-color: #1f1f1f !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -202,10 +179,11 @@ with st.sidebar:
     st.markdown("""
     <div style='text-align:center;padding:1.4rem 0 0.8rem;'>
         <div style='font-size:2.4rem;'>🎓</div>
-        <div style='font-size:1rem;font-weight:700;color:#e0e7ff;margin-top:6px;'>
-            College AI Assistant
-        </div>
-        <div style='font-size:0.72rem;color:#6366f1;margin-top:3px;'>
+        <div style='font-size:1rem;font-weight:700;
+                    background:linear-gradient(90deg,#f97316,#fbbf24);
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+                    margin-top:6px;'>College AI Assistant</div>
+        <div style='font-size:0.72rem;color:#3f3f46;margin-top:3px;'>
             Udayanath Autonomous College
         </div>
     </div>
@@ -213,8 +191,10 @@ with st.sidebar:
 
     st.divider()
 
-    st.markdown("<p style='font-size:0.72rem;color:#6366f1;letter-spacing:0.6px;'>📚 SUPPORTED TOPICS</p>",
-                unsafe_allow_html=True)
+    st.markdown(
+        "<p style='font-size:0.7rem;color:#3f3f46;letter-spacing:0.6px;'>📚 SUPPORTED TOPICS</p>",
+        unsafe_allow_html=True
+    )
 
     topics = ["📍 Location", "🏛️ History", "👩‍🏫 Principal", "👨‍💼 Director",
               "🎓 Courses", "💼 Placements", "🏟️ Stadium",
@@ -231,15 +211,15 @@ with st.sidebar:
     asked = len([m for m in st.session_state.messages if m["role"] == "user"])
     st.markdown(f"""
     <div style='display:flex;gap:8px;margin-bottom:12px;'>
-        <div style='flex:1;background:#312e81;border:1px solid #4338ca;
+        <div style='flex:1;background:#1c1007;border:1px solid #f9731655;
                     border-radius:10px;padding:10px 6px;text-align:center;'>
-            <div style='font-size:1.3rem;font-weight:700;color:#a5b4fc;'>{asked}</div>
-            <div style='font-size:0.68rem;color:#818cf8;margin-top:2px;'>Asked</div>
+            <div style='font-size:1.4rem;font-weight:800;color:#f97316;'>{asked}</div>
+            <div style='font-size:0.68rem;color:#3f3f46;margin-top:2px;'>Asked</div>
         </div>
-        <div style='flex:1;background:#312e81;border:1px solid #4338ca;
+        <div style='flex:1;background:#1c1007;border:1px solid #f9731655;
                     border-radius:10px;padding:10px 6px;text-align:center;'>
-            <div style='font-size:1.3rem;font-weight:700;color:#a5b4fc;'>{asked}</div>
-            <div style='font-size:0.68rem;color:#818cf8;margin-top:2px;'>Answered</div>
+            <div style='font-size:1.4rem;font-weight:800;color:#fbbf24;'>{asked}</div>
+            <div style='font-size:0.68rem;color:#3f3f46;margin-top:2px;'>Answered</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -251,7 +231,7 @@ with st.sidebar:
 
 # ── Header ──
 st.markdown("""
-<div style='text-align:center;padding-top:0.5rem;'>
+<div style='text-align:center;padding-top:0.4rem;'>
     <div style='font-size:2.2rem;margin-bottom:4px;'>🎓</div>
     <div class='title'>Udayanath Autonomous College<br>AI Assistant</div>
 </div>
@@ -274,22 +254,28 @@ st.divider()
 # ── Empty state ──
 if not st.session_state.messages:
     st.markdown("""
-    <div style='text-align:center;padding:3rem 1rem;background:#fff;
-                border:1px solid #e0e7ff;border-radius:16px;
-                margin:0.5rem 0 1.5rem;box-shadow:0 1px 6px rgba(0,0,0,0.04);'>
+    <div style='text-align:center;padding:3rem 1rem;
+                background:#111111;
+                border-top:2px solid #f97316;
+                border-bottom:2px solid #fbbf24;
+                border-left:1px solid #1f1f1f;
+                border-right:1px solid #1f1f1f;
+                border-radius:16px;margin:0.5rem 0 1.5rem;'>
         <div style='font-size:2.5rem;margin-bottom:10px;'>💬</div>
-        <div style='font-size:1rem;font-weight:600;color:#1e1b4b;margin-bottom:6px;'>
+        <div style='font-size:1rem;font-weight:600;color:#e4e4e7;margin-bottom:6px;'>
             Ask me anything about Udayanath College!
         </div>
-        <div style='font-size:0.85rem;color:#9ca3af;'>
+        <div style='font-size:0.85rem;color:#3f3f46;'>
             Type your question below to get started.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
 # ── Chat history ──
+# ✅ FIX: pass avatar= explicitly so no "face"/"smart_toy" text appears
 for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
+    avatar = "🧑" if msg["role"] == "user" else "🤖"
+    with st.chat_message(msg["role"], avatar=avatar):
         st.markdown(msg["content"])
 
 # ── Chat input ──
@@ -297,15 +283,13 @@ question = st.chat_input("Ask a question about the college...")
 
 if question:
 
-    # Show user message
+    # User message — ✅ emoji avatar
     st.session_state.messages.append({"role": "user", "content": question})
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar="🧑"):
         st.markdown(question)
 
-    # Stream assistant response
-    with st.chat_message("assistant"):
-        # st.write_stream consumes the generator and streams text word by word
+    # Assistant streaming — ✅ emoji avatar
+    with st.chat_message("assistant", avatar="🤖"):
         streamed_answer = st.write_stream(ask_question_stream(question))
 
-    # Save the fully streamed answer to history
     st.session_state.messages.append({"role": "assistant", "content": streamed_answer})
