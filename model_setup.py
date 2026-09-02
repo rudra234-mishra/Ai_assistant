@@ -3,8 +3,10 @@ from dotenv import load_dotenv
 load_dotenv()
 from logging_config import logger
 from langchain_openai import AzureChatOpenAI,AzureOpenAIEmbeddings
+from functools import lru_cache
 
 ##llm Model
+@lru_cache(maxsize=1)
 def llm_model_conn():
     logger.info("Model Connection Start :")
     try:
@@ -24,6 +26,7 @@ def llm_model_conn():
 
 
 ##Embedding Model
+@lru_cache(maxsize=1)
 def embd_model_conn():
      logger.info("Embedding Model Connection Start :")
      try:
